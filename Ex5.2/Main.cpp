@@ -5,16 +5,16 @@ static GLfloat xRot = 0.0f;
 static GLfloat yRot = 0.0f;
 
 GLfloat lightPos[] = { 0.0f, 0.0f, 75.0f, 1.0f };
-GLfloat specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat specular[] = { 0.0f, 1.0f, 1.0f, 1.0f };
 GLfloat specref[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat ambientLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
 GLfloat spotDir[] = { 0.0f, 0.0f, -1.0f };
-
+GLfloat DIFFUSElight[] = { 0,1,1,1 };
 void ChangeSize(int w, int h);
 void SpecialKeys(int key, int x, int y);
 void RenderScene();
 void SetupRC();
-
+void idle();
 int main() {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(800,400);
@@ -23,7 +23,10 @@ int main() {
 	glutReshapeFunc(ChangeSize);
 	glutSpecialFunc(SpecialKeys);
 	glutDisplayFunc(RenderScene);
+	glutIdleFunc(idle);
 	SetupRC();
+	
+	
 	glutMainLoop();
 }
 
@@ -78,12 +81,43 @@ void SpecialKeys(int key, int x, int y)
 		yRot = 355.0f;
 
 	// Refresh the Window
+
 	glutPostRedisplay();
 }
 
 void RenderScene()
 {
 	//TODO finish render
+	glShadeModel(GL_SMOOTH);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	glPushMatrix();
+	glRotatef(yRot, 0.0f, 1.0f, 0.0f);
+	glRotatef(xRot, 1.0f, 0.0f, 0.0f);
+
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spotDir);
+	glColor3ub(0, 0, 255);
+	glTranslatef(lightPos[0], lightPos[1], lightPos[2]);
+	glutSolidCone(4.0f, 6.0f, 15, 15);
+	glPushAttrib(GL_LIGHTING_BIT);
+
+	glDisable(GL_LIGHTING);
+	glColor3ub(255, 255, 0);
+	glutSolidSphere(3.0f, 20, 20);
+
+	// Restore lighting state variables
+	glPopAttrib();
+
+	// Restore coordinate transformations
+	glPopMatrix();
+
+	
+	glColor3ub(125, 125, 125);
+	glutSolidSphere(30.0f, 50, 50);
+	
+	
+	glutSwapBuffers();
 }
 
 void SetupRC()
@@ -100,7 +134,7 @@ void SetupRC()
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLight);
 
 	// The light is composed of just a diffuse and specular components
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, ambientLight);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, DIFFUSElight);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 
@@ -125,4 +159,10 @@ void SetupRC()
 	// Black background
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
+}
+
+void idle()
+{
+	yRot += 0.1;
+	RenderScene();
 }
