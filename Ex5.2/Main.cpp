@@ -10,12 +10,15 @@ Sphere sp_1(30, 20, 20);
 Sphere sp_2(30, 20, 20);
 static float lineColor[] = { 0.2f, 0.2f, 0.2f, 1 };
 
-GLfloat lightPos[] = { 0.0f, 0.0f, 75.0f, 1.0f };
-GLfloat specular[] = { 0.0f, 1.0f, 1.0f, 1.0f };
+GLfloat lightPos_1[] = { 0.0f, 0.0f, 75.0f, 1.0f };
+GLfloat lightPos_2[] = { 0.0f, 0.0f, 100.0f, 1.0f };
+GLfloat specular_1[] = { 0.0f, 1.0f, 1.0f, 1.0f };
+GLfloat specular_2[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 GLfloat specref[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat ambientLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
 GLfloat spotDir[] = { 0.0f, 0.0f, -1.0f };
-GLfloat DIFFUSElight[] = { 0,1,1,1 };
+GLfloat DIFFUSElight_1[] = { 0,1,1,1 };
+GLfloat DIFFUSElight_2[] = { 1,0,0,1 };
 void ChangeSize(int w, int h);
 void SpecialKeys(int key, int x, int y);
 void RenderScene();
@@ -94,24 +97,47 @@ void SpecialKeys(int key, int x, int y)
 
 void RenderScene()
 {
-	//light 0
+	
 	glShadeModel(GL_SMOOTH);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
+	//light 0
 	glPushMatrix();
 	glRotatef(yRot, 0.0f, 1.0f, 0.0f);
-	glRotatef(xRot, 1.0f, 0.0f, 0.0f);
+	//glRotatef(xRot, 1.0f, 0.0f, 0.0f);
 
-	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPos_1);
 	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spotDir);
 	glColor3ub(0, 0, 255);
-	glTranslatef(lightPos[0], lightPos[1], lightPos[2]);
-	glutSolidCone(4.0f, 6.0f, 15, 15);
+	glTranslatef(lightPos_1[0], lightPos_1[1], lightPos_1[2]);
+	//glutSolidCone(4.0f, 6.0f, 15, 15);
 	glPushAttrib(GL_LIGHTING_BIT);
 
-	glDisable(GL_LIGHTING);
+	//glDisable(GL_LIGHTING);
+	//glColor3ub(255, 255, 0);
+	//glutSolidSphere(3.0f, 20, 20);
+
+	// Restore lighting state variables
+	glPopAttrib();
+
+	// Restore coordinate transformations
+	glPopMatrix();
+
+	//light 1
+	glPushMatrix();
+	//glRotatef(yRot, 0.0f, 1.0f, 0.0f);
+	glRotatef(xRot, 1.0f, 0.0f, 0.0f);
+
+	glLightfv(GL_LIGHT1, GL_POSITION, lightPos_2);
+	glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotDir);
+	glColor3ub(0, 0, 255);
+	glTranslatef(lightPos_2[0], lightPos_2[1], lightPos_2[2]);
+	//glutSolidCone(4.0f, 6.0f, 15, 15);
+	glPushAttrib(GL_LIGHTING_BIT);
+
+	/*glDisable(GL_LIGHTING);
 	glColor3ub(255, 255, 0);
-	glutSolidSphere(3.0f, 20, 20);
+	glutSolidSphere(3.0f, 20, 20);*/
 
 	// Restore lighting state variables
 	glPopAttrib();
@@ -149,17 +175,21 @@ void SetupRC()
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLight);
 
 	// The light is composed of just a diffuse and specular components
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, DIFFUSElight);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
-	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, DIFFUSElight_1);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular_1);
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPos_1);
+
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, DIFFUSElight_2);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, specular_2);
+	glLightfv(GL_LIGHT1, GL_POSITION, lightPos_2);
 
 	// Specific spot effects
 	// Cut off angle is 60 degrees
 	glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 50.0f);
-
+	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 50.0f);
 	// Enable this light in particular
 	glEnable(GL_LIGHT0);
-
+	glEnable(GL_LIGHT1);
 	// Enable color tracking
 	glEnable(GL_COLOR_MATERIAL);
 
@@ -172,13 +202,13 @@ void SetupRC()
 	glMateriali(GL_FRONT, GL_SHININESS, 128);
 
 	// Black background
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
 
 }
 
 void idle()
 {
-	yRot += 0.05;
-	//xRot += 0.05;
+	yRot += 0.07;
+	xRot += 0.10;
 	glutPostRedisplay();
 }
