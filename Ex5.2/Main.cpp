@@ -1,8 +1,14 @@
 #include <stdlib.h>
 #include <iostream>
 #include "glut.h"
+#include "Sphere.h"
+
 static GLfloat xRot = 0.0f;
 static GLfloat yRot = 0.0f;
+
+Sphere sp_1(30, 20, 20);
+Sphere sp_2(30, 20, 20);
+static float lineColor[] = { 0.2f, 0.2f, 0.2f, 1 };
 
 GLfloat lightPos[] = { 0.0f, 0.0f, 75.0f, 1.0f };
 GLfloat specular[] = { 0.0f, 1.0f, 1.0f, 1.0f };
@@ -22,6 +28,7 @@ int main() {
 
 	glutReshapeFunc(ChangeSize);
 	glutSpecialFunc(SpecialKeys);
+
 	glutDisplayFunc(RenderScene);
 	glutIdleFunc(idle);
 	SetupRC();
@@ -116,8 +123,15 @@ void RenderScene()
 	//TODO more obj
 
 	glPushMatrix();
+	glTranslatef(0, 40, 0);
 	glColor3ub(125, 125, 125);
-	glutSolidSphere(30.0f, 50, 50);
+	sp_1.draw();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0, -40, 0);
+	glColor3ub(125, 125, 0);
+	sp_2.draw();
 	glPopMatrix();
 	
 	glutSwapBuffers();
@@ -166,6 +180,6 @@ void SetupRC()
 
 void idle()
 {
-	yRot += 0.1;
+	yRot += 0.05;
 	glutPostRedisplay();
 }
