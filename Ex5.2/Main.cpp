@@ -94,8 +94,7 @@ void SpecialKeys(int key, int x, int y)
 
 void RenderScene()
 {
-	//glViewport(0, 0, 800, 400);
-	//TODO finish render
+	//light 0
 	glShadeModel(GL_SMOOTH);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
@@ -120,7 +119,6 @@ void RenderScene()
 	// Restore coordinate transformations
 	glPopMatrix();
 
-	//TODO more obj
 
 	glPushMatrix();
 	glTranslatef(0, 40, 0);
@@ -181,5 +179,6 @@ void SetupRC()
 void idle()
 {
 	yRot += 0.05;
+	//xRot += 0.05;
 	glutPostRedisplay();
 }
